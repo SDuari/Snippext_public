@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from transformers import BertModel, AlbertModel, DistilBertModel, RobertaModel, XLNetModel#, LongformerModel
-from sentence_transformers import SentenceTransformer
+from transformers import AutoTokenizer, AutoModel
 
 model_ckpts = {'bert': "bert-base-uncased",
                'albert': "albert-base-v2",
@@ -9,7 +9,7 @@ model_ckpts = {'bert': "bert-base-uncased",
                'xlnet': "xlnet-base-cased",
                'distilbert': "distilbert-base-uncased",
                #'longformer': "allenai/longformer-base-4096",
-               'paraphrase':"sentence-transformers/paraphrase-distilroberta-base-v2"}
+               'stsb-mpnet':"sentence-transformers/stsb-mpnet-base-v2"}
 
 class MultiTaskNet(nn.Module):
     def __init__(self, task_configs=[],
@@ -36,8 +36,9 @@ class MultiTaskNet(nn.Module):
                 self.bert = RobertaModel.from_pretrained(model_ckpts[lm])
             #elif lm == 'longformer':
              #   self.bert = LongformerModel.from_pretrained(model_ckpts[lm])
-            elif lm == 'paraphrase':
-                self.bert = SentenceTransformer(model_ckpts[lm])
+            elif lm == 'stsb-mpnet':
+                self.bert = AutoModel.from_pretrained(model_ckpts[lm])
+
         else:
             output_model_file = bert_path
             model_state_dict = torch.load(output_model_file,
@@ -58,7 +59,7 @@ class MultiTaskNet(nn.Module):
                 self.bert = RobertaModel.from_pretrained(model_ckpts[lm],
                         state_dict=model_state_dict)
             elif lm == 'paraphrase':
-                self.bert = SentenceTransformer(model_ckpts[lm],
+                self.bert = AutoModel.from_pretrained(model_ckpts[lm],
                         state_dict=model_state_dict)
 
         self.device = device
