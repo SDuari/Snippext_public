@@ -38,6 +38,9 @@ def get_tokenizer(lm='bert'):
         elif lm == 'longformer':
             from transformers import LongformerTokenizer
             tokenizer = LongformerTokenizer.from_pretrained('allenai/longformer-base-4096')
+        elif lm == 'stsb-mpnet':
+            from transformers import AutoTokenizer
+            tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/stsb-mpnet-base-v2')
     return tokenizer
 
 
